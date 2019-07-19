@@ -97,14 +97,14 @@ class Wukong(object):
     def initDetector(self):
         if self.detector is not None:
             self.detector.terminate()
-        if config.get('/do_not_bother/hotword_switch', False):
-            models = [
-                constants.getHotwordModel(config.get('hotword', 'wukong.pmdl')),
-                constants.getHotwordModel(utils.get_do_not_bother_on_hotword()),
-                constants.getHotwordModel(utils.get_do_not_bother_off_hotword())
-            ]
-        else:
-            models = constants.getHotwordModel(config.get('hotword', 'wukong.pmdl'))
+        models = config.get('hotword', 'wukong.pmdl').split(',')
+        for i in range(0, len(models)):
+            models[i] = constants.getHotwordModel(models[i])
+        
+        if config.get('/do_not_bother/hotword_switch', False):   
+            models.append(constants.getHotwordModel(utils.get_do_not_bother_on_hotword()))
+            models.append(constants.getHotwordModel(utils.get_do_not_bother_off_hotword()))
+        
         self.detector = snowboydecoder.HotwordDetector(models, sensitivity=config.get('sensitivity', 0.5))
         # main loop
         try:
