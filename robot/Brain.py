@@ -33,12 +33,18 @@ class Brain(object):
 
         Arguments:
         text -- 用户输入
-        """
-
-        args = {
+            "service_id": "S19939",
+            "api_key": 'GPETGVR3wkGfGycrADRSmzBC',
+            "secret_key": 'OfTwGdN9a6GC8bXsY6hSQS4Kd3X6zXfM'
             "service_id": "S13442",
             "api_key": 'w5v7gUV3iPGsGntcM84PtOOM',
             "secret_key": 'KffXwW6E1alcGplcabcNs63Li6GvvnfL'
+        """
+
+        args = {            
+            "service_id": "S19939",
+            "api_key": 'GPETGVR3wkGfGycrADRSmzBC',
+            "secret_key": 'OfTwGdN9a6GC8bXsY6hSQS4Kd3X6zXfM'
         }
         parsed = self.conversation.doParse(text, **args)
 
