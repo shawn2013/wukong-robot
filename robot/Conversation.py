@@ -61,7 +61,7 @@ class Conversation(object):
         if onSay:
             self.onSay = onSay
 
-        if query.strip() == '':
+        if query is None or query.strip() == '':
             self.pardon()
             return
 
@@ -122,6 +122,9 @@ class Conversation(object):
     def appendHistory(self, t, text, UUID=''):
         """ 将会话历史加进历史记录 """
         if t in (0, 1) and text != '':
+            if text is None:
+                text = ''
+
             if text.endswith(',') or text.endswith('，'):
                 text = text[:-1]
             if UUID == '' or UUID == None or UUID == 'null':
@@ -195,11 +198,7 @@ class Conversation(object):
             if not silent:
                 time.sleep(1)
                 Player.play(constants.getData('beep_hi.wav'))
-            models = config.get('hotword', 'wukong.pmdl').split(',')
-            for i in range(0, len(models)):
-                models[i] = constants.getHotwordModel(models[i])
-            listener = snowboydecoder.ActiveListener(models) 
-            #listener = snowboydecoder.ActiveListener([constants.getHotwordModel(config.get('hotword', 'wukong.pmdl'))])
+            listener = snowboydecoder.ActiveListener([constants.getHotwordModel(config.get('hotword', 'wukong.pmdl'))])
             voice = listener.listen(
                 silent_count_threshold=config.get('silent_threshold', 15),
                 recording_timeout=config.get('recording_timeout', 5) * 4
