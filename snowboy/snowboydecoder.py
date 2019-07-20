@@ -147,8 +147,9 @@ class ActiveListener(object):
             if len(data) == 0:
                 time.sleep(sleep_time)
                 continue
-            
+
             status = self.detector.RunDetection(data)
+            logger.debug('detect voice in listener,status=' + str(status))
             if status == -1:
                 logger.warning("Error initializing streams or reading audio data")
                 
@@ -234,6 +235,7 @@ class HotwordDetector(object):
         self.detector.SetAudioGain(audio_gain)
         self.detector.ApplyFrontend(apply_frontend)
         self.num_hotwords = self.detector.NumHotwords()
+        logger.debug('num_hotwords:'+str(self.num_hotwords))
 
         if len(decoder_model) > 1 and len(sensitivity) == 1:
             sensitivity = sensitivity * self.num_hotwords
@@ -243,7 +245,7 @@ class HotwordDetector(object):
                 "(%d) does not match" % (self.num_hotwords, len(sensitivity))
         sensitivity_str = ",".join([str(t) for t in sensitivity])
         if len(sensitivity) != 0:
-            self.detector.SetSensitivity(sensitivity_str.encode())        
+            self.detector.SetSensitivity(sensitivity_str.encode())
 
         self.ring_buffer = RingBuffer(
             self.detector.NumChannels() * self.detector.SampleRate() * 5)
@@ -302,15 +304,20 @@ class HotwordDetector(object):
             logger.debug("detect voice return")
             return
 
+        logger.debug('start decoder:')
+        logger.debug(detected_callback)
         tc = type(detected_callback)
         if tc is not list:
             detected_callback = [detected_callback]
         if len(detected_callback) == 1 and self.num_hotwords > 1:
             detected_callback *= self.num_hotwords
-
+            logger.debug('detected_callback *= self.num_hotwords')
+            logger.debug(detected_callback)
+        """
         assert self.num_hotwords == len(detected_callback), \
             "Error: hotwords in your models (%d) do not match the number of " \
             "callbacks (%d)" % (self.num_hotwords, len(detected_callback))
+        """
 
         logger.debug("detecting...")
 
@@ -340,11 +347,15 @@ class HotwordDetector(object):
                     message += time.strftime("%Y-%m-%d %H:%M:%S",
                                          time.localtime(time.time()))
                     logger.info(message)
-                    callback = detected_callback[status-1]                    
+                    logger.debug('all detected_callback in decoder:')
+                    logger.debug(detected_callback)
+                    callback = detected_callback[status-1]
+                    logger.debug('find detected_callback by status:')
                     if callback is not None:
                         callback()
 
-                    if audio_recorder_callback is not None and status == 1 and utils.is_proper_time():
+                    if audio_recorder_callback is not None and status >= 1 and utils.is_proper_time():
+                        logger.debug('actived')
                         state = "ACTIVE"
                     continue
 
@@ -367,7 +378,8 @@ class HotwordDetector(object):
                     continue
 
                 recordingCount = recordingCount + 1
-                self.recordedData.append(data)                
+                self.recordedData.append(data)
+                logger.debug('action in ACTIVE')
 
         logger.debug("finished.")
 

@@ -89,7 +89,9 @@ class Wukong(object):
         statistic.report(0)
 
         try:
+            logger.debug('start init detector')
             self.initDetector()
+            logger.debug('finish init detector')
         except AttributeError:
             logger.error('初始化离线唤醒功能失败')
             pass
@@ -101,19 +103,27 @@ class Wukong(object):
         for i in range(0, len(models)):
             models[i] = constants.getHotwordModel(models[i])
         
-        if config.get('/do_not_bother/hotword_switch', False):   
+        if config.get('/do_not_bother/hotword_switch', False):
             models.append(constants.getHotwordModel(utils.get_do_not_bother_on_hotword()))
             models.append(constants.getHotwordModel(utils.get_do_not_bother_off_hotword()))
-        
+
+        logger.debug('init models:' + str(len(models)))
+        logger.debug(models)
         self.detector = snowboydecoder.HotwordDetector(models, sensitivity=config.get('sensitivity', 0.5))
+        logger.debug(self.detector)
         # main loop
         try:
+            callbacks = []
+            for i in range(0, len(config.get('hotword', 'wukong.pmdl').split(','))):
+                callbacks.append(self._detected_callback)
             if config.get('/do_not_bother/hotword_switch', False):
                 callbacks = [self._detected_callback,
                              self._do_not_bother_on_callback,
                              self._do_not_bother_off_callback]
-            else:
-                callbacks = self._detected_callback
+            #else:
+            #    callbacks = self._detected_callback
+            logger.debug('wukong callbacks:')
+            logger.debug(callbacks)
             self.detector.start(detected_callback=callbacks,
                                 audio_recorder_callback=self._conversation.converse,
                                 interrupt_check=self._interrupt_callback,
