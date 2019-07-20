@@ -66,7 +66,6 @@ class Plugin(AbstractPlugin):
         self.song_list = self.get_song_list(config.get('/LocalPlayer/path'))
         if self.song_list == None:
             logger.error('{} 插件配置有误'.format(self.SLUG))
-        logger.info(self.song_list)
         return MusicPlayer(self.song_list, self)
 
     def handle(self, text, parsed):

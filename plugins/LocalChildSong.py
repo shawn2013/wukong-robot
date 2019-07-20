@@ -20,7 +20,7 @@ class ChildSongPlayer(object):
     def reload(self):
         song_list = list(filter(lambda d: d.endswith('.mp3'), os.listdir(self.path)))
         self.playlist = [os.path.join(self.path, song) for song in song_list]
-        logger.info(self.playlist)
+        logger.debug(self.playlist)
 
     def play(self):
         logger.debug('ChildSongPlayer play')
@@ -117,7 +117,6 @@ class Plugin(AbstractPlugin):
         self.song_list = self.get_song_list(path)
         if self.song_list == None:
             logger.error('{} 插件配置有误'.format(self.SLUG))
-        #logger.info(self.song_list)
         return ChildSongPlayer(self.song_list, path, self)
 
     def handle(self, text, parsed):
