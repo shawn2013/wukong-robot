@@ -68,6 +68,9 @@ class BaiduASR(AbstractASR):
         return config.get('baidu_yuyin', {})
 
     def transcribe(self, fp):
+        if fp is None:
+            logger.info('什么都没听见')
+            return ''
         # 识别本地文件
         pcm = utils.get_pcm_from_wav(fp)
         res = self.client.asr(pcm, 'pcm', 16000, {
