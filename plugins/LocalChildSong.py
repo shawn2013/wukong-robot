@@ -2,6 +2,7 @@
 import os
 import shutil
 import string
+import random
 from robot import config, logging
 from robot.sdk.AbstractPlugin import AbstractPlugin
 
@@ -110,6 +111,7 @@ class Plugin(AbstractPlugin):
            not os.path.isdir(path):
             return []
         song_list = list(filter(lambda d: d.endswith('.mp3'), os.listdir(path)))
+        random.shuffle(song_list)
         return [os.path.join(path, song) for song in song_list]
 
     def init_music_player(self):
