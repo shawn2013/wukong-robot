@@ -121,10 +121,7 @@ class Conversation(object):
 
     def appendHistory(self, t, text, UUID=''):
         """ 将会话历史加进历史记录 """
-        if t in (0, 1) and text != '':
-            if text is None:
-                text = ''
-
+        if t in (0, 1) and text is not None and text != '':
             if text.endswith(',') or text.endswith('，'):
                 text = text[:-1]
             if UUID == '' or UUID == None or UUID == 'null':
@@ -213,6 +210,7 @@ class Conversation(object):
                 query = self.asr.transcribe(voice)
                 utils.check_and_delete(voice)
                 return query
+            return ''
         except Exception as e:            
             logger.error(e)
             return ''        
