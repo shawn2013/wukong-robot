@@ -20,6 +20,7 @@ class ChildSongPlayer(object):
         
     def reload(self):
         song_list = list(filter(lambda d: d.endswith('.mp3'), os.listdir(self.path)))
+        random.shuffle(song_list)
         self.playlist = [os.path.join(self.path, song) for song in song_list]
         logger.debug(self.playlist)
 
@@ -30,6 +31,7 @@ class ChildSongPlayer(object):
             self.plugin.play(path, False, self.next, self.volume)
         else:
             logger.error('文件不存在: {}'.format(path))
+        #self.reload()
 
     def report(self):
         filename = os.path.basename(self.playlist[self.idx])
@@ -61,7 +63,7 @@ class ChildSongPlayer(object):
 
     def demand(self, name):
         #logger.info('demand play ' + name)
-        self.reload()
+        #self.reload()
         for i in range(len(self.playlist)):
             filename = os.path.basename(self.playlist[i])
             #logger.info(filename + "," + name)
@@ -80,7 +82,7 @@ class ChildSongPlayer(object):
             if not os.path.exists(deleted):
                 os.mkdir(deleted)
             shutil.move(path, deleted)
-            self.reload()
+            #self.reload()
         else:
             logger.error('文件不存在: {}'.format(path))
 
