@@ -1,5 +1,5 @@
 #!/bin/bash
 #cur_path=$(cd $(dirname $0); pwd)
-wukong_dir=/mnt/card/wukong
+wukong_dir=/mnt/card/wukong-robot
 cd $wukong_dir
 nohup sudo python3 wukong.py >/dev/null &
